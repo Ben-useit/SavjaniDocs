@@ -1,0 +1,34 @@
+{% load i18n %}
+{% load static %}
+
+{% load common_tags %}
+{% load navigation_tags %}
+
+    <div class="table-responsive">
+
+        <table class="table table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Uploaded documents</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for key, values in user_dic %}
+            <tr>
+            <td style="padding-right:10px;width:250px"><span class="glyphicon glyphicon-user"></span> {{ key.get_full_name }}</td>
+            <td>{{ values }}</td>
+            <td class="last" style="padding-left:25px;">
+            <a href="{% url 'reports:user_activity' date_from=date_from|date:'d.m.Y' date_to=date_to|date:'d.m.Y' user_pk=key.pk %}"><button type="button" class="btn btn-xs btn-primary do-not-print">Details</button></a>
+            </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+
+
+
+

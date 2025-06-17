@@ -1,0 +1,193 @@
+{% load i18n %}
+{% load static %}
+
+{% load common_tags %}
+{% load navigation_tags %}
+    <style>
+
+
+    .docitem {
+        margin-bottom: 20px;
+        background-color: #d9d9d9;
+    }
+       
+    .document-label {
+        font-size: 120%;
+        font-weight: bolder;
+        color: #982920;
+    }
+    .metadata-name {
+        font-weight: bolder;
+    }
+
+    .metadata-value {
+        font-style: italic;
+
+    }
+
+    #module {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    #module p.collapse[aria-expanded="false"] {
+        display: block;
+        height: 160px !important;
+        overflow: hidden;
+    }
+    #module p.collapsing[aria-expanded="false"] {
+        height: 160px !important;
+    }
+    #module a.collapsed:after  {
+        content: '+ Show More';
+    }
+
+    #module a:not(.collapsed):after {
+        content: '- Show Less';
+    }
+    .flex-container {
+      display: flex;
+      #height: 230px;
+      justify-content: center;
+      #background-color: DodgerBlue;
+      flex-direction: column;
+    }
+    .shared1 {
+    background1: repeating-linear-gradient(
+      -55deg,
+      #222,
+      #222 10px,
+      #333 10px,
+      #333 20px
+    );
+    height: 240px;
+        
+    }
+
+    .checkbox-document{
+        position: relative;
+        max-width: 10px;
+        top: -10px;
+    }
+    .ro-permission {
+        color: grey;
+    }
+
+    </style>            
+    
+<div class="row">
+    <div class="col-xs-12">
+        <h4>
+            {% if page_obj %}
+                {% if page_obj.paginator.num_pages != 1 %}
+                    {% blocktrans with page_obj.start_index as start and page_obj.end_index as end and page_obj.paginator.object_list|length as total and page_obj.number as page_number and page_obj.paginator.num_pages as total_pages %}Total ({{ start }} - {{ end }} out of {{ total }}) (Page {{ page_number }} of {{ total_pages }}){% endblocktrans %}
+                {% else %}
+                    {% with page_obj.paginator.object_list|length as total %}
+                        {% if not slice_count %}
+                        {% blocktrans %}Total: {{ total }}{% endblocktrans %}
+                        {% elif slice_count < total %}
+                        {% blocktrans %}Total: {{ slice_count }}{% endblocktrans %}
+                        {% else %}
+                        {% blocktrans %}Total: {{ total }}{% endblocktrans %}
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+            {% else %}
+                {% blocktrans with object_list|length as total %}Total: {{ total }}{% endblocktrans %}
+            {% endif %}
+        </h4> 
+    </div> 
+</div>
+
+
+<div class="row">
+    <div class="col-xs-12">  
+        <div class="well center-block" style="background-color: white;">
+            <div class="clearfix">
+                <div class="pull-right">
+                    <form action="{% url 'common:multi_object_action_view' %}" class="form-multi-object-action" method="get">
+                        {% if object_list %}
+                            {% if not hide_multi_item_actions %}
+                                {% get_multi_item_links_form object_list %}
+                            {% endif %}
+                            {% if multi_item_actions %}
+                                <fieldset style="margin-top: -10px;">
+                                    <input class="check-all" type="checkbox"/>&nbsp;
+                                    {{ multi_item_form }}
+                                </fieldset>
+                            {% endif %}
+                        {% endif %}
+                    </form>
+                </div>
+            </div><!-- div class="well center-block">  -->
+            {% if object_list %}
+            <hr style="border-bottom: 1px solid lightgrey;">
+            {% endif %}
+            <div class="row row-items" style="margin-left: 0px;margin-right: 0px;">
+                {% with  count=slice_count|stringformat:"s" %}
+                {% with  slicce=":"|add:count %}
+                {% for object in object_list|slice:slicce %}
+
+
+
+<div class="row" style="margin-bottom: 0px;">
+        <div class="col-sm-1" style="max-width: 10px;">
+        <div class="checkbox checkbox-document">
+            <label for="id_indexes_0">
+                {% if multi_item_actions %}
+                    {% if multi_select_item_properties %}
+                        <input class="form-multi-object-action-checkbox check-all-slave checkbox" type="checkbox" name="properties_{{ object|get_encoded_parameter:multi_select_item_properties }}" />
+                    {% else %}
+                        <input class="form-multi-object-action-checkbox check-all-slave checkbox" type="checkbox" name="pk_{{ object.pk }}" />
+                    {% endif %}
+                {% endif %}
+            </label>
+        </div><!-- class="checkbox" -->               
+        </div><!-- class="col-sm-1" --> 
+     <!-- Thumbnail --> 
+        <div class="col-sm-2" >
+    {% for column in object|get_source_column_thumbnail %}    
+        {% source_column_resolve column=column %}{{ column_result }}
+    {% endfor %}
+        </div>
+      <!-- Metadata -->   
+        <div class="col-sm-6">
+            <a href="{{ object.get_absolute_url }}" style="color:white">
+                <span class="document-label">{{ object }}</span>
+            </a><br />
+            {% for column in object|get_source_column_metadata %}
+                {% source_column_resolve column=column %}
+                {{ column_result }}
+            {% endfor %}   
+        <div>
+            <i class="glyphicon glyphicon-pencil" style = "position: relative;top: 2px;padding-right: 3px;font-size:13px;"></i><span style = "font-size:13px;">{{ object.last_modified }}</span>
+            <i class="glyphicon glyphicon-arrow-up" style = "position: relative;top: 2px;padding-right: 3px;font-size:13px;"></i><span style = "font-size:13px;">{{ object.date_added }}</span>
+        </div>
+        </div>
+ 
+         <div class="col-sm-3 shared">
+    {% for column in object|get_source_column_permissions %}    
+        {% source_column_resolve column=column %}{{ column_result }}
+    {% endfor %} 
+        </div>         
+
+</div><!-- class="row" -->  
+
+
+
+
+
+
+
+
+                {% endfor %} <!-- for object in objecect_list -->
+                {% endwith %}
+                {% endwith %}
+            </div><!-- class="row row-items" -->
+
+
+
+
+
+    </div><!-- div class="col-xs-12">  -->
+
+</div><!-- div class="row">  -->

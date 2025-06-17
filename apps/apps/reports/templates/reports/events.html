@@ -1,0 +1,50 @@
+{% extends 'reports/base.html' %}
+
+{% load reports_tags %}
+
+
+{% block content %}
+<div id='printable_content'>
+    <table class="table table-condensed" style="margin-bottom:0px;">
+        <tbody>
+            <tr>
+                <td class="h4">{{ title }}</td>
+                <td rowspan=2>
+                <button onclick="printContent('printable_content');" class="btn btn-xs btn-warning do-not-print pull-right">Print</button>
+                <a href="{% url 'register:register_list_documents' pk=object.pk %}"><button class="btn btn-xs btn-default do-not-print pull-right" style="margin: 0px 5px;">Documents</button></a>
+                <a href="{% url 'register:register_edit' register_pk=object.pk %}"><button class="btn btn-xs btn-default do-not-print pull-right">Edit</button></a></td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+<table class="table table-responsive">
+<thead>
+  <th>Date</th>
+  <th style="width:200px">User</th>
+  <th style="width:200px">Action</th>
+  <th></th>
+</thead>
+<tbody>
+{% for obj in object_list %}
+<tr>
+<td>{% event_timestamp obj.timestamp %}</td>
+<td>{% event_user_name obj.actor_object_id %}</td>
+{% format_action obj  60 %}
+
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<script>
+function printContent(el){
+  var restorepage = document.body.innerHTML;
+  var printcontent = $('#' + el).clone();
+  $('body').empty().html(printcontent);
+  window.print();
+  document.body.innerHTML = restorepage;
+}
+
+</script>
+
+{% endblock %}

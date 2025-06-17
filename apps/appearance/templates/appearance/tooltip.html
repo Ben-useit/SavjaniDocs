@@ -1,0 +1,58 @@
+{% load i18n %}
+{% load static %}
+
+{% load common_tags %}
+{% load navigation_tags %}
+
+
+<style>
+table.tooltipp {
+    table-layout: fixed;
+
+}
+
+
+th,
+td {
+  padding: 2px;
+  text-align: top;
+  overflow: hidden;
+  vertical-align: top;
+}
+
+#metadata_col1 {
+    width: 100px;
+}
+#metadata_col2 {
+    width: 200px;
+}
+
+</style>
+
+ 
+  
+<table class="tooltipp">
+
+    
+ <tr>
+    <td  colspan=2 style="border-bottom: 1px solid #ddd;"><b>{{ object }}</td></td>
+</tr>   
+{% for column in object_list|get_source_column_metadata %}
+
+{% source_column_resolve column=column %}{{ column_result }}
+
+{% endfor %} 
+<tr>
+    <td  colspan=2 style="border-top: 1px solid #ddd;"><b class="glyphicon glyphicon-pencil" >&nbsp;</b>{{ object.last_modified }}</td>
+</tr>
+<tr>
+    
+    <td colspan=2><b class="glyphicon glyphicon-cloud-upload">&nbsp;</b>{{ object.date_added }}</td>
+</tr>
+
+</table>
+
+
+
+
+

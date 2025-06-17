@@ -1,0 +1,316 @@
+{% extends 'appearance/base.html' %}
+
+{% load i18n %}
+
+{% load navigation_tags %}
+{% load static %}
+{% load common_tags %}
+{% load register_tags %}
+
+{% block content %}
+<style>
+.date-entry{
+  width:140px;
+}
+.form-control {
+  height: 32px;
+  display: inline;
+}
+
+.table1 {
+  width: auto;
+}
+.btn-c {
+  background-color: #ffffff !important;
+  color: #8064A2 !important;
+}
+
+
+.flex-container-row {
+  display: flex;
+  background-color1: green;
+   flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    
+    
+}
+
+.flex-container-col1 > div {
+  background-color: #f1f100;
+  margin: 1px;
+  padding: 2px;
+ 
+}
+
+.flex-container-row > div {
+  background-color1: #00f100;
+  margin-right: 2px;
+  padding: 0px;
+  font-size: 14px;
+}
+
+
+
+
+
+</style>
+<div class="row">
+  <form action="{% url action_url %}" method="GET" role="search">
+    <div class="col-md-12">
+      <div class="input-group">
+        <input class="form-control" name="q" type="text" value="">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="submit" style="height: 32px;padding: 0px 10px;">{% trans 'Search' %}</button>
+        </span>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="checkbox">
+      {% if display_closed_files %}
+      <label><input type="checkbox" name="closed_files" value="True" checked>Include Closed Files ( Uncheck this box and click on Search to hide closed register files )</label>
+      {% else %}
+      <label><input type="checkbox" name="closed_files" value="True">Include Closed Files ( Check this box and click on Search to include closed register files )</label>
+      {% endif %}
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Filter collapse div start -->
+<div  class="row" >
+  <div id="search_filter" class="collapse">
+    <form id="register_filter_form"  method="get" action="{% url action_url %}">
+      {% csrf_token %}
+      {% for hidden_field in form.hidden_fields %}
+        {{ hidden_field }}
+      {% endfor %}
+      <input type="hidden" name="search_query" value="{{ search_query }}">
+      <input type="hidden" name="filter_query" value="{{ filter_query }}">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+      <table class="table table1 table-condensed">
+        <tbody>
+          <tr>
+            <td></td>
+            <td style="width: 220px;"><label>Opened from:</label><br />{{ form.from }}</td>
+            <td style="width: 220px;"><label>Opened to:</label><br />{{ form.to }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.status.label_tag }}</td>
+            <td colspan=2>{{ form.status }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.lawyers.label_tag }}</td>
+            <td colspan=2>{{ form.lawyers }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.clients.label_tag }}</td>
+            <td colspan=2>{{ form.clients}}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.groups.label_tag }}</td>
+            <td colspan=2>{{ form.groups }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.departments.label_tag }}</td>
+            <td colspan=2>{{ form.departments }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.checklist.label_tag }}</td>
+            <td colspan=2>{{ form.checklist }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.status_report.label_tag }}</td>
+            <td colspan=2>{{ form.status_report }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.room.label_tag }}</td>
+            <td colspan=2>{{ form.room }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.documents.label_tag }}</td>
+            <td colspan=2> {{ form.documents_check }} Include matters with upto <b><span id="demo"></span></b> documents{{ form.documents }}<br />
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td colspan=2 class="text-right" style='padding:5px'>
+              <button type="submit" class="btn btn-default btn-xs btn-c"
+              style="color:green !important;">
+              Apply Filter</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-1"></div>
+    </form>
+  </div>
+</div>
+<!-- Filter collapse div end -->
+
+<!-- Row with Filter and Print button Start -->
+<div class="welll center-block">
+  <div class="clearfix" style="padding-bottom:13px">
+    <div class="pull-right">
+      {% if filter_active %}
+      <a href="{% url action_url %}" class="btn btn-default btn-xs btn-c"  style="margin-top:-3px;" title="Clear Filter">Clear Filter</span>
+      </a>
+      {% endif %}
+      <button class="btn btn-default btn-xs btn-c" href="#search_filter" data-toggle="collapse" style="margin-top:-3px;">Filter Results</button>
+        <a class="new_window" href="{% url print_url key=cache_key %}">
+          <button class="btn btn-default btn-xs btn-c"  title="Print Report" style="margin-top:-3px;" type="submit"><i class="fas fa-print"></i></button>
+        </a>
+        <a class="new_window" href="{% url print_csv key=cache_key %}">
+          <button class="btn btn-default btn-xs btn-c"  title="Print Report as CSV" style="margin-top:-3px;" type="submit"><i class="fas fa-file-excel"></i></button>
+        </a>
+          <form action="{% url 'common:multi_object_action_view' %}" class="form-multi-object-action" style="display:inline-block;" method="get">
+            {% if object_list %}
+              {% if not hide_multi_item_actions %}
+                {% get_multi_item_links_form object_list %}
+              {% endif %}
+              {% if multi_item_actions %}
+              <fieldset>
+                {{ multi_item_form }}
+              </fieldset>
+              {% endif %}
+            {% endif %}
+          </form>
+    </div>
+  </div>
+</div>
+<!-- Row with Filter and Print button End-->
+
+<!-- Table with register files -->
+
+
+{% for object in object_list %}
+<div class="well">
+
+		<div class="flex-container-row">
+			<div style="flex: 0 0 20px">
+				{% if multi_item_actions %} 
+					{% if multi_select_item_properties %}
+						<input type="checkbox" class="form-multi-object-action-checkbox check-all-slave checkbox1" name="properties_{{ object|get_encoded_parameter:multi_select_item_properties }}" value="" />
+					{% else %}
+						<input
+						type="checkbox" class="form-multi-object-action-checkbox check-all-slave checkbox1" name="pk_{{ object.pk }}" value="" />
+					{% endif %}
+				{% endif %}	
+				{% get_checklist object %}				
+			</div>
+			<div style="flex: 0 0 73px">{{ object.opened |date:"d.m.Y" }}</div>  
+			<div style="flex: 1 1 45px">
+						<b>{{ object.file_no }}</b>
+			<div>{{ object.parties }}</div>
+			{%if object.has_clients %} 
+			<div><i class="fas fa-user-tie"></i> {{ object.get_client_name }}</div>
+			{% endif %}
+			{%if object.has_group %} 
+				<div><i class="fas fa-object-group"></i> {{ object.group }} </div>
+			{% endif %}
+			
+			
+			
+			</div>   
+			<div style="flex: 0 0 45px">{% get_status object %}</div>   
+		</div>
+		
+		<div class="flex-container-row">
+			<div style="flex: 0 0 20px"></div>
+			<div style="flex: 0 0 73px"></div>  
+			<div  style="flex: 1 1 45px">
+			{% if object.closed  %}
+			<i class="far fa-square" style="color: #FFD43B;"></i> Closed: {{ object.closed | date:"Y"}}
+			{% endif %}
+
+			{% if object.last_activity  %}
+			<i class="far fa-square" style="color: #FFD43B;"></i> Last activity: {{ object.last_activity | date:"Y" }}
+			{% endif %}
+
+			{% if object.retention_period  %}
+			<i class="far fa-square" style="color: #74C0FC;"></i> Retention period: {{ object.retention_period }}
+			{% endif %}
+
+			{% if object.year_of_destruction  %}
+			<i class="far fa-square" style="color: #c01c28;"></i> Year of destruction: {{ object.year_of_destruction | date:"Y" }}
+			{% endif %}  			
+			{% if object.carton_no %}
+			<i class="far fa-square" style="color: #c01c28;"></i> Carton Number: {{ object.carton_no  }}
+			{% endif %}
+			{% if object.room %}
+			<i class="far fa-square" style="color: #c01c28;"></i> Room Number: {{ object.room }} </td>
+			{% endif %}
+			
+			
+			</div>      
+		</div> 
+		<div class="flex-container-row">
+			<div  style="flex: 1 1 45px;text-align:right;margin-top:10px">
+{% get_menu_links 'object menu' source=object as resolved_links %} 
+        {% for object_navigation_links in resolved_links %} 
+        {% for link in object_navigation_links %}
+         <a
+            class="btn btn-default btn-xs {% if link.active %}{{ link_class_active }}{% endif %} new_window"
+            {% for key,value in link.html_data.items %}
+                data-{{ key }}={{ value }}
+            {% endfor %}
+        style="background-color: #ffffff !important; color: #8064A2 !important;"
+        href="{{ link.url }}"  title="{{ link.text }}"
+        >
+        {% if link.icon_class%}
+        {{ link.icon_class.render }}
+        {% else %}
+        {{ link.text }}
+        {% endif %}
+
+        </a>       
+        {% endfor %}
+        {% endfor %}	
+			</div>      
+		</div> 
+
+</div>
+{% endfor %}
+
+
+{% if is_paginated %}
+    <ul class="pagination pagination-sm">
+        {% if page_obj.has_previous %}
+            <li><a href="?{{ page_obj.previous_page_number.querystring }}{{ url_filter }}">&lsaquo;&lsaquo;</a></li>
+        {% else %}
+            <li class="disabled"><a href="#">&lsaquo;&lsaquo;</a></li>
+        {% endif %}
+
+        {% for page in page_obj.pages %}
+
+            {% if page %}
+
+                {% ifequal page page_obj.number %}
+                    <li class="active"><a href="#">{{ page }}</a></li>
+                {% else %}
+                    <li><a href="?{{ page.querystring }}{{ url_filter }}">{{ page }}</a></li>
+                {% endifequal %}
+            {% else %}
+                <li class="disabled"><a href="#" class="disabled">...</a></li>
+            {% endif %}
+
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <li><a href="?{{ page_obj.next_page_number.querystring }}{{ url_filter }}">&rsaquo;&rsaquo;</a></li>
+        {% else %}
+            <li class="disabled"><a href="#">&rsaquo;&rsaquo;</a></li>
+        {% endif %}
+    </ul>
+{% endif %}
+<script>
+var slider = document.getElementById("myRange");
+var output = document.getElementById("demo");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+  output.innerHTML = this.value;
+}
+</script>
+{% endblock content %}
+

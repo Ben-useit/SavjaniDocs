@@ -1,0 +1,59 @@
+{% load i18n %}
+{% load static %}
+
+{% load navigation_tags %}
+{% load smart_settings_tags %}
+
+<style>
+ul.nav a:hover { color: #990033 !important; }
+.navbar-default .navbar-nav > li > .dropdown-menu > li > a:hover,
+.navbar-default .navbar-nav > li > .dropdown-menu > li > a:focus {
+  color: #990033;
+  background-color:  #e5e8e8;
+}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+  color: #990033;
+  background-color: #e5e8e8;
+}
+</style>
+
+<nav class="navbar navbar-default navbar-fixed-top" style="background-color:#aaa">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">{% trans 'Toggle navigation' %}</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url home_view %}">
+            <img src="{% static "appearance/images/docs24.ico" %}" height=24 width=24 /></a>
+
+            <!-- <a class="navbar-brand" href="{% url home_view %}">123{% smart_setting 'COMMON_PROJECT_TITLE' %}</a> -->
+        </div>
+        <div id="navbar" class="navbar-collapse collapse" >
+            <ul class="nav navbar-nav">
+                {% get_menu_links 'main menu' as menu_links %}
+                {% for link_set in menu_links %}
+                    {% for link in link_set %}
+                        {% with 'true' as as_li %}
+                        {% with 'true' as hide_active_anchor %}
+                        {% with 'active' as li_class_active %}
+                        {% with 'first' as li_class_first %}
+                        {% with ' ' as link_classes %}
+                            {% include 'navigation/generic_subnavigation.html' %}
+                        {% endwith %}
+                        {% endwith %}
+                        {% endwith %}
+                        {% endwith %}
+                        {% endwith %}
+                    {% endfor %}
+                {% endfor %}
+                <li class=''>
+            <a class="None" href="/search/documents.Document/">
+            <span class="glyphicon glyphicon-search" height=24 width=24 /></a>
+            </li>
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,55 @@
+{% load i18n %}
+{% load static %}
+
+{% load common_tags %}
+{% load navigation_tags %}
+
+<div class="row">
+  <div class="col-xs-12">
+    {% if not result %}
+        <div class="well">
+            {% include 'appearance/no_results.html' %}
+        </div>
+    {% else %}
+    <hr>
+		<h3>{{ title }}</h3>
+    {% include 'appearance/list_header.html' %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><b>File number statistics</b></h3>
+        <form action="" method="GET" role="search" style="display:inline;">
+        <input type="hidden" name="print" type="text" value="{{ query_request }}">
+        <button class="btn btn-sm btn-warning"  title="Print Statistics" style="margin-top:7px;" type="submit">
+          <span class="glyphicon glyphicon-print"></span>
+        </button>
+        </form>
+      </div
+      <div class="panel-body">  
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Active</th>
+              <th>Not Active</th>
+              <th>Closed</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in data %}
+            <tr>
+              <td>{{item.0}}</td>
+              <td>{{item.1}}</td>
+              <td>{{item.2}}</td>
+              <td>{{item.3}}</td>
+              <td>{{item.4}}</td>
+            </tr>
+            {% endfor%}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+

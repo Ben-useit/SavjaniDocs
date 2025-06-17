@@ -1,0 +1,34 @@
+{% load i18n %}
+{% load static %}
+
+{% load appearance_tags %}
+{% load common_tags %}
+{% load navigation_tags %}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="well center-block">
+            {% if no_results_title %}
+            <div class="text-center">
+                <div style="font-size: 150%;">
+                    {% if no_results_icon %}
+                        {{ no_results_icon.render }}
+                    {% else %}
+                        <i class="fa fa-times"></i><br />
+                        {{ no_results_title }}
+                    {% endif %}
+                </div>   
+            </div>         
+            {% else %}
+            <form method="post" class="post-form">
+                {% csrf_token %}
+                {{ form.as_ul }}
+                <script>
+                        $.getScript('/static/sapitwa/js/sapitwa_form.059279a7bbc2.js');
+                </script>
+                <button type="submit">Submit</button>
+            </form>
+            {% endif %}
+        </div>
+</div>
+

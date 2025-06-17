@@ -1,0 +1,73 @@
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Static Example</title>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+  <!-- XDSoft DateTimePicker -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+</head>
+<style>
+.hide{
+    display:None;
+.indent-1{
+    padding-left:10px;
+}
+.indent-2{
+    padding-left:20px;
+}
+</style>
+<h1 lang="en-GB" class="western" align="center" style="line-height: 150%">
+<font size="2" style="font-size: 11pt">CHECKLIST ON LITIGATION FILES</font></h1>
+<p class="western" align="center" style="margin-bottom: 0cm; line-height: 100%">
+<font face="Times New Roman, serif"><span lang="en-GB">(For High
+Court Matters )</span></font></p>
+<p lang="en-GB" class="western" align="center" style="margin-bottom: 0cm; line-height: 100%">
+</p>
+<br/>
+  {{ context }}
+<br/>  
+
+<p align="justify" style="margin-bottom: 0cm; line-height: 100%">
+<font face="Times New Roman, serif"><font size="2" style="font-size: 11pt">1. File
+number: {{ matter.number }}</font></font>
+</p>
+
+<p align="justify" style="margin-bottom: 0cm; line-height: 100%">
+<font face="Times New Roman, serif"><font size="2" style="font-size: 11pt">2. Parties:
+{{ matter.parties }}</font></font>
+</p>
+{% load widget_tweaks %}
+<form method="post" novalidate>
+  {% csrf_token %}
+ {{ form.non_field_errors }}
+
+  {% for hidden_field in form.hidden_fields %}
+    {{ hidden_field.errors }}
+    {{ hidden_field }}
+  {% endfor %}
+
+    {% for field in form.visible_fields %}
+            <p align="justify" style="margin-bottom: 0cm;
+            {% if field.field.widget.attrs.indent %} padding-left: {% widthratio  field.field.widget.attrs.indent 1 20  %}px; {% endif %}
+            line-height: 100%">
+            <font face="Times New Roman, serif"><font size="2" style="font-size: 11pt">
+            {{ field.label }}
+            {% if field.field.widget.attrs.textarea %}
+            <p {% if field.field.widget.attrs.indent %} style="padding-left: {% widthratio  field.field.widget.attrs.indent 1 20  %}px;" {% endif %}>
+            {% endif %}
+              {{ field.errors }}
+              {{ field }}
+              {{ field.help_text }}
+              {% if field.field.widget.attrs.textarea %}
+              </p>
+              {% endif %}
+            </font></font>
+            </p>
+    {% endfor %}
+
+  <button type="submit">Submit</button>
+</form>

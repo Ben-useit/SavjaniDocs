@@ -1,0 +1,113 @@
+{% load i18n %}
+
+{% load widget_tweaks %}
+
+{% load appearance_tags %}
+
+{{ form.media.render_css|safe }}
+
+        <table class="table" style="max-width:420px">
+        <tr colspan=4><td><b>Groups:</b></td></tr>
+        <tr>
+        {% for group in groups %}
+            <td>
+             <table class="table table-sm" style="margin-bottom:0;width:160px;">
+               <th style="background-color: #aaa;color:white;">
+                  <label class="form-check-label" for="sel1" style="padding-left: 5px;">{{group.0.label}}</label>                   
+                 </th>
+                <tr style="background-color:  #E74C3C;height:22px;">
+                    <td style="line-height:0px;padding-top:3px;padding-left:12px;">
+
+                    <div class="radio-inline">
+                      <label><input value=0 title="No access" style="margin-top:0px;" type="radio" name="role_selection-{{group.0.id}}" {% if group.2 == 0 %} checked {% endif %}></label>
+                    </div>
+                      
+                    <div class="radio-inline">
+                      <label><input value=1 title="Limited access" style="margin-top:0px;" type="radio" name="role_selection-{{group.0.id}}" {% if group.2 == 1 %} checked {% endif %}></label>
+                    </div>
+          
+                    <div class="radio-inline">
+                      <label><input value=2 title="Full access" style="margin-top:0px;" type="radio" name="role_selection-{{group.0.id}}" {% if group.2 == 2 %} checked {% endif %}></label>
+                    </div>
+                    </td>
+                </tr>
+                {% for user in group.1 %}
+                <tr style="background-color: #fff3e0;"><td style="padding-left: 13px;">{{ user }}</td></tr>
+                {% endfor %}    
+             </table>
+            </td> 
+            {%if forloop.counter|divisibleby:"4" %}
+            </tr><tr>
+            {% endif %}
+        {% endfor %}
+    
+        
+        <tr colspan=4><td><b>Lawyers:</b></td></tr>
+        <tr>
+        {% for lawyer in lawyers %}
+            <td>
+             <table class="table table-sm" style="margin-bottom:0;width:160px;">
+               <th style="background-color:#aaa;color:white;">
+                  <label class="form-check-label" for="sel1" style="padding-left: 5px;">{{lawyer.0.label}}</label>                   
+                 </th>
+                <tr style="background-color: #E74C3C;height:22px;">
+                    <td style="line-height:0px;padding-top:3px;padding-left:12px;">
+
+                    <div class="radio-inline">
+                      <label><input value=0 title="No access" style="margin-top:0px;" type="radio" name="role_selection-{{lawyer.0.id}}" {% if lawyer.1 == 0 %} checked {% endif %}></label>
+                    </div>
+                      
+                    <div class="radio-inline">
+                      <label><input value=1 title="Limited access" style="margin-top:0px;" type="radio" name="role_selection-{{lawyer.0.id}}" {% if lawyer.1 == 1 %} checked {% endif %}></label>
+                    </div>
+          
+                    <div class="radio-inline">
+                      <label><input value=2 title="Full access" style="margin-top:0px;" type="radio" name="role_selection-{{lawyer.0.id}}" {% if lawyer.1 == 2 %} checked {% endif %}></label>
+                    </div>
+                    </td>
+                </tr> 
+                <tr style="background-color: #fff3e0;height:30px;"><td style="padding-left: 13px;"> </td></tr>
+             </table>
+            </td>            
+          {%if forloop.counter|divisibleby:"4" %}
+          </tr><tr>
+          {% endif %}
+        {% endfor %}
+        </tr>        
+                 
+        <tr colspan=4><td><hr /></td></tr>
+        <tr>
+        {% for other in others %}
+            <td>
+             <table class="table table-sm" style="margin-bottom:0;width:160px;">
+               <th style="background-color: #aaa;color:white;">
+                  <label class="form-check-label" for="sel1" style="padding-left: 5px;">{{other.0.label}}</label>                   
+                 </th>
+                <tr style="background-color: #E74C3C;height:22px;">
+                    <td style="line-height:0px;padding-top:3px;padding-left:12px;">
+
+                    <div class="radio-inline">
+                      <label><input value=0 title="No access" style="margin-top:0px;" type="radio" name="role_selection-{{other.0.id}}" {% if other.1 == 0 %} checked {% endif %}></label>
+                    </div>
+                      
+                    <div class="radio-inline">
+                      <label><input value=1 title="Limited access" style="margin-top:0px;" type="radio" name="role_selection-{{other.0.id}}" {% if other.1 == 1 %} checked {% endif %}></label>
+                    </div>
+          
+                    <div class="radio-inline">
+                      <label><input value=2 title="Full access" style="margin-top:0px;" type="radio" name="role_selection-{{other.0.id}}" {% if other.1 == 2 %} checked {% endif %}></label>
+                    </div>
+                    </td>
+                </tr> 
+                <tr style="background-color: #fff3e0;;height:30px;"><td style="padding-left: 13px;"> </td></tr>
+             </table>
+            </td>            
+          {%if forloop.counter|divisibleby:"4" %}
+          </tr><tr>
+          {% endif %}
+        {% endfor %}    
+        
+         </tr>
+        </table>  
+
+

@@ -1,0 +1,91 @@
+{% extends 'appearance/base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% load common_tags %}
+{% load navigation_tags %}
+
+
+{% block content %}
+
+
+
+<style>
+.hide{
+    display:None;
+.indent-1{
+    padding-left:10px;
+}
+.indent-2{
+    padding-left:20px;
+}
+
+/* Tooltip */
+.checklist + .tooltip > .tooltip-inner {
+  background-color: #73AD21;
+  color: #FFFFFF;
+  border: 1px solid green;
+  padding: 15px;
+  font-size: 20px;
+}
+
+</style>
+
+<form class="form-inline" method="post" novalidate>
+  {% csrf_token %}
+<div class="bg-light clearfix  pull-right">
+  <button type="submit" class="btn btn-default" title="Save"><span class="glyphicon glyphicon-save"></span></button>
+    <a href="/checklist/{{ register.pk }}/pdf/" target="_blank" title="Print">
+      <button type="button" class="btn btn-primary btn-warning" ><span class="glyphicon glyphicon-print"></span></button>
+    </a>
+    <a class="checklist" href="/checklist/{{ register.pk }}/delete/" title="Delete">
+      <button type="button" class="checklist btn btn-primary btn-danger" ><span class="glyphicon glyphicon-trash"></span></span></button>
+    </a>
+
+</div>
+
+
+<p>
+<div class="form-group">
+<label>1. File number:</label>
+{{ register.file_no }}
+</div>
+</p>
+
+<p>
+<div class="form-group">
+<label>2. Parties: </label>
+{{ register.parties }}
+</div>
+</p>
+ {{ form.non_field_errors }}
+
+  {% for hidden_field in form.hidden_fields %}
+    {{ hidden_field.errors }}
+    {{ hidden_field }}
+  {% endfor %}
+
+    {% for field in form.visible_fields %}
+    <p>
+    <div class="form-group">
+            <p style="
+            {% if field.field.widget.attrs.indent %} padding-left: {% widthratio  field.field.widget.attrs.indent 1 100  %}px; {% endif %}">
+            <label>{{ field.label }}</label>
+            {% if field.field.widget.attrs.textarea %}
+            <div {% if field.field.widget.attrs.indent %} style="padding-left: {% widthratio  field.field.widget.attrs.indent 1 100  %}px;" {% endif %}>
+            {% endif %}
+              {{ field.errors }}
+              {{ field }}
+              {{ field.help_text }}
+              {% if field.field.widget.attrs.textarea %}
+              </div>
+              {% endif %}
+            </p>
+    </div>
+    </p>
+    {% endfor %}
+
+
+</form>
+
+{% endblock %}

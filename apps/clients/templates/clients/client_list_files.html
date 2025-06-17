@@ -1,0 +1,201 @@
+{% extends 'appearance/base.html' %}
+
+{% load i18n %}
+
+{% load navigation_tags %}
+{% load static %}
+{% load common_tags %}
+
+
+
+{% block content %}
+<style>
+.date-entry{
+  width:140px;
+}
+.form-control {
+  height: 32px;
+  display: inline;
+}
+
+.table {
+  width: auto;
+}
+</style>
+<!-- Filter collapse div start -->
+<div  class="row" >
+  <div id="search_filter" class="collapse">
+    <form id="register_filter_form"  method="post" action="{% url 'clients:client_list_register_files' client_pk=client_object.pk %}">
+      {% csrf_token %}
+      {% for hidden_field in form.hidden_fields %}
+        {{ hidden_field }}
+      {% endfor %}
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+      <table class="table table-condensed">
+        <tbody>
+          <tr>
+            <td></td>
+            <td style="width: 220px;"><label>Opened from:</label><br />{{ form.from }}</td>
+            <td style="width: 220px;"><label>Openend to:</label><br />{{ form.to }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.files.label_tag }}</td>
+            <td colspan=2>{{ form.files }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.status.label_tag }}</td>
+            <td colspan=2>{{ form.status }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.lawyers.label_tag }}</td>
+            <td colspan=2>{{ form.lawyers }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.groups.label_tag }}</td>
+            <td colspan=2>{{ form.groups }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.departments.label_tag }}</td>
+            <td colspan=2>{{ form.departments }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.checklist.label_tag }}</td>
+            <td colspan=2>{{ form.checklist }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.documents.label_tag }}</td>
+            <td colspan=2> {{ form.documents_check }} Include matters with upto <b><span id="demo"></span></b> documents{{ form.documents }}<br />
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td colspan=2 class="text-right" style='padding:5px'><button type="submit" class="btn-sm btn-info" >Apply Filter</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-1"></div>
+    </form>
+  </div>
+</div>
+<!-- Filter collapse div end -->
+
+
+<!-- Row with Filter and Edit button Start -->
+<div class="welll center-block">
+  <div class="clearfix" style="padding-bottom:13px">
+    <div class="pull-right">
+      {% if filter_active %}
+      <a href="{% url 'clients:client_list_register_files' client_pk=client_object.pk %}">
+        <button class="btn btn-sm btn-warning"  title="Clear Filter" style="margin-top:7px;">Clear Filter</span></button>
+      </a>
+      {% endif %}
+      <button type="button" class="btn btn-sm btn-info" href="#search_filter" data-toggle="collapse" style="margin-top:7px;">Filter Results</button>
+      <a href="{% url 'clients:client_list_register_files' client_pk=client_object.pk %}">
+        <button class="btn btn-sm btn-warning"  title="Print Report" style="margin-top:7px;" type="submit"><span class="glyphicon glyphicon-print"></span></button>
+      </a>
+    </div>
+  </div>
+</div>
+<!-- Row with Filter and Edit button End-->
+
+<div class="table-responsive">
+  <table class="table table-condensed table-striped">
+  <tbody>
+    {% if not hide_header %}
+      <tr>
+        {% if multi_item_actions %}
+          <th class="first"><input class="checkbox check-all" type="checkbox" /></th>
+        {% endif %}
+
+        {% if not hide_object %}
+          <th>{% trans 'Identifier' %}</th>
+        {% endif %}
+
+        {% if not hide_columns %}
+          {% for column in object_list|get_source_columns %}
+          {% if column.label != 'Client' %}
+            <th>
+              {{ column.label }}</th>
+          {% endif %}
+          {% endfor %}
+        {% endif %}
+
+        {% for column in extra_columns %}
+          <th>{{ column.name }}</th>
+        {% endfor %}
+
+        {% if not hide_links %}
+          <th class="">&nbsp;</th>
+        {% endif %}
+      </tr>
+    {% endif %}
+    {% for object in object_list %}
+      <tr>
+        {% if multi_item_actions %}
+          <td>
+            {% if multi_select_item_properties %}
+              <input type="checkbox" class="form-multi-object-action-checkbox check-all-slave checkbox" name="properties_{{ object|get_encoded_parameter:multi_select_item_properties }}" value="" />
+            {% else %}
+              <input type="checkbox" class="form-multi-object-action-checkbox check-all-slave checkbox" name="pk_{{ object.pk }}" value="" />
+            {% endif %}
+          </td>
+        {% endif %}
+        {% if not hide_object %}
+          {% if main_object %}
+            {% with object|object_property:main_object as object %}
+            <td>{% if not hide_link %}<a href="{{ object.get_absolute_url }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
+            {% endwith %}
+          {% else %}
+            <td>{% if not hide_link %}<a href="{{ object.get_absolute_url }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
+          {% endif %}
+        {% endif %}
+
+        {% if not hide_columns %}
+          {% for column in object|get_source_columns %}
+          {% if column.label != 'Client' %}
+            <td>{% source_column_resolve column=column %}{{ column_result }}</td>
+          {% endif %}
+          {% endfor %}
+        {% endif %}
+
+        {% for column in extra_columns %}
+          <td>{{ object|object_property:column.attribute }}</td>
+        {% endfor %}
+
+        {% if not hide_links %}
+          <td class="last">
+            {% get_menu_links 'object menu' source=object as resolved_links %}
+            {% for object_navigation_links in resolved_links %}
+              {% with 'true' as horizontal %}
+                {% with 'true' as hide_icon %}
+                  {% include 'navigation/generic_navigation.html' %}
+                {% endwith %}
+              {% endwith %}
+            {% endfor %}
+          </td>
+        {% endif %}
+      </tr>
+      {% empty %}
+      <tr>
+        <td class="text-center" colspan=99>
+          {% include 'appearance/no_results.html' %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include 'pagination/pagination.html' %}
+<script>
+var slider = document.getElementById("myRange");
+var output = document.getElementById("demo");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+  output.innerHTML = this.value;
+}
+</script>
+{% endblock content %}
+

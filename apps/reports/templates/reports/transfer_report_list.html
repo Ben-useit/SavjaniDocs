@@ -1,0 +1,162 @@
+{% extends 'appearance/base.html' %}
+
+{% load i18n %}
+
+{% load navigation_tags %}
+{% load static %}
+{% load common_tags %}
+{% load reports_tags %}
+{% block content %}
+<style>
+.date-entry{
+  width:140px;
+}
+.form-control {
+  height: 32px;
+  display: inline;
+}
+
+.table1 {
+  width: auto;
+}
+.btn-c {
+  background-color: #ffffff !important;
+  color: #8064A2 !important;
+}
+</style>
+
+<!-- Filter collapse div start -->
+<div  class="row" >
+  <div id="search_filter" class="collapse">
+    <form id="register_filter_form"  method="get" action="{% url action_url %}">
+      {% csrf_token %}
+      {% for hidden_field in form.hidden_fields %}
+        {{ hidden_field }}
+      {% endfor %}
+      <input type="hidden" name="search_query" value="{{ search_query }}">
+      <input type="hidden" name="filter_query" value="{{ filter_query }}">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+      <table class="table table1 table-condensed">
+        <tbody>
+          <tr>
+            <td></td>
+            <td style="width: 220px;"><label>Transferred from:</label><br />{{ form.from }}</td>
+            <td style="width: 220px;"><label>Transferred to:</label><br />{{ form.to }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.transferred_to.label_tag }}</td>
+            <td colspan=2>{{ form.transferred_to }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.lawyers.label_tag }}</td>
+            <td colspan=2>{{ form.lawyers }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.clients.label_tag }}</td>
+            <td colspan=2>{{ form.clients}}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.groups.label_tag }}</td>
+            <td colspan=2>{{ form.groups }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.departments.label_tag }}</td>
+            <td colspan=2>{{ form.departments }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.checklist.label_tag }}</td>
+            <td colspan=2>{{ form.checklist }}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td colspan=2 class="text-right" style='padding:5px'>
+              <button type="submit" class="btn btn-default btn-xs btn-c"
+              style="color:green !important;">
+              Apply Filter</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-1"></div>
+    </form>
+  </div>
+</div>
+<!-- Filter collapse div end -->
+
+
+<!-- Row with Filter and Print button Start -->
+<div class="welll center-block">
+  <div class="clearfix" style="padding-bottom:13px">
+    <div class="pull-right">
+      {% if filter_active %}
+      <a href="{% url action_url %}" class="btn btn-default btn-xs btn-c"  style="margin-top:-3px;" title="Clear Filter">Clear Filter</span>
+      </a>
+      {% endif %}
+      <button class="btn btn-default btn-xs btn-c" href="#search_filter" data-toggle="collapse" style="margin-top:-3px;">Filter Results</button>
+        <a class="new_window" href="{% url 'reports:register_transfer_print' key=cache_key %}">
+          <button class="btn btn-default btn-xs btn-c"  title="Print Report" style="margin-top:-3px;" type="submit"><i class="fas fa-print"></i></button>
+        </a>
+    </div>
+  </div>
+</div>
+<!-- Row with Filter and Print button End-->
+
+<div class="table-responsive">
+  <table class="table table-condensed table-striped">
+    <tbody>
+      <tr>
+        <th>Date</th>
+        <th>File</th>
+        <th>Parties</th>
+        <th></th>
+      </tr>
+  {% for object in object_list %}
+  <tr>
+    <td>{{ object.timestamp | date:'d.m.Y' }}</th>
+    <td>{{ object.action_object.file_no }}</th>
+    <td>{{ object.action_object.parties | truncatechars:90 }} </th>
+    <td>{% format_description object.description %}</th>
+  </tr>
+  {% empty %}
+  <tr>
+    <td class="text-center" colspan=99>
+      {% include 'appearance/no_results.html' %}
+    </td>
+  </tr>
+  {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if is_paginated %}
+    <ul class="pagination pagination-sm">
+        {% if page_obj.has_previous %}
+            <li><a href="?{{ page_obj.previous_page_number.querystring }}{{ url_filter }}">&lsaquo;&lsaquo;</a></li>
+        {% else %}
+            <li class="disabled"><a href="#">&lsaquo;&lsaquo;</a></li>
+        {% endif %}
+
+        {% for page in page_obj.pages %}
+
+            {% if page %}
+
+                {% ifequal page page_obj.number %}
+                    <li class="active"><a href="#">{{ page }}</a></li>
+                {% else %}
+                    <li><a href="?{{ page.querystring }}{{ url_filter }}">{{ page }}</a></li>
+                {% endifequal %}
+            {% else %}
+                <li class="disabled"><a href="#" class="disabled">...</a></li>
+            {% endif %}
+
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <li><a href="?{{ page_obj.next_page_number.querystring }}{{ url_filter }}">&rsaquo;&rsaquo;</a></li>
+        {% else %}
+            <li class="disabled"><a href="#">&rsaquo;&rsaquo;</a></li>
+        {% endif %}
+    </ul>
+{% endif %}
+{% endblock content %}
+

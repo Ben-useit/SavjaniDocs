@@ -1,0 +1,36 @@
+{% load i18n %}
+{% load static %}
+
+{% load common_tags %}
+{% load navigation_tags %}
+
+    <div class="table-responsive">
+
+        <table class="table table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>Lawyer</th>
+                    <th>Active</th>
+                    <th>Not Active</th>
+                    <th>Dormant</th>
+                    <th>Closed</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for key, values in reg_dic %}
+                <tr>
+                <td style="padding-right:10px;width:250px"><span class="glyphicon glyphicon-user"></span> {{ key }}</td>
+                {% for value in values %}
+                <td>{{ value }}</td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+
+
+
+

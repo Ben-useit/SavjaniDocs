@@ -1,0 +1,224 @@
+{% extends 'appearance/base.html' %}
+
+{% load i18n %}
+
+{% load navigation_tags %}
+{% load static %}
+{% load common_tags %}
+
+{% block content %}
+<style>
+.date-entry{
+  width:140px;
+}
+.form-control {
+  height: 32px;
+  display: inline;
+}
+
+.table1 {
+  width: auto;
+}
+.btn-c {
+  background-color: #ffffff !important;
+  color: #8064A2 !important;
+}
+th {
+  vertical-align: top !important;
+}
+
+</style>
+
+
+<div class="table-responsive">
+  <table class="table table-condensed table-bordered">
+    <thead>
+      <tr>
+        <th>RETAIN FILE OR TRANSFER REQUIRED</th>
+        <th>DATE OF CLOSURE LETTER TO CLIENT</th>
+        <th>INSTRUCTIONS RECEIVED RE FILE TRANSFER</th>
+        <th>FILE TO NEW LAWYER (NAME) OR CLIENT</th>
+        <th>NOTICE OF CHANGE OF LEGAL PRACTITIONERS</th>
+        <th>RECEIPT OF FILE ACKNOWLEDGEMENT</th>
+        <th>DATE OF COMPLETION OF TRANSFER PROCESS</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ chart_obj.retain_or_transfer }}</td>
+        <td>{{ chart_obj.date_closure_letter |date:"jS M Y" }}</td>
+        <td>{{ chart_obj.instructions |date:"jS M Y"}}</td>
+        <td>{{ chart_obj.get_client_file_transferrred_to }}</td>
+        <td>{{ chart_obj.notice |date:"jS M Y"}}</td>
+        <td>{{ chart_obj.receipt |date:"jS M Y"}}</td>
+        <td>{{ chart_obj.date_completion |date:"jS M Y"}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% if object_list %}
+<div class="table-responsive">
+  <table class="table table-condensed table-striped">
+  <tbody>
+    {% if not hide_header %}
+      <tr>
+        {% if multi_item_actions %}
+          <th class="first"><input class="checkbox check-all" type="checkbox" /></th>
+        {% endif %}
+
+        {% if not hide_object %}
+          <th>{% trans 'Identifier' %}</th>
+        {% endif %}
+
+        {% if not hide_columns %}
+          {% for column in object_list|get_source_columns %}
+
+              {% if column.label == "Group" %}
+              {% if display_group %} <th>{{ column.label }}</th> {% endif %}
+              {% else %}
+              <th>{{ column.label }}</th>
+              {% endif %}
+          {% endfor %}
+        {% endif %}
+
+        {% for column in extra_columns %}
+          <th>{{ column.name }}</th>
+        {% endfor %}
+
+        {% if not hide_links %}
+          <th class="" style="width:150px;">&nbsp;</th>
+        {% endif %}
+      </tr>
+    {% endif %}
+    {% for object in object_list %}
+      <tr>
+        {% if multi_item_actions %}
+          <td>
+            {% if multi_select_item_properties %}
+              <input type="checkbox" class="form-multi-object-action-checkbox check-all-slave checkbox" name="properties_{{ object|get_encoded_parameter:multi_select_item_properties }}" value="" />
+            {% else %}
+              <input type="checkbox" class="form-multi-object-action-checkbox check-all-slave checkbox" name="pk_{{ object.pk }}" value="" />
+            {% endif %}
+          </td>
+        {% endif %}
+        {% if not hide_object %}
+          {% if main_object %}
+            {% with object|object_property:main_object as object %}
+            <td>{% if not hide_link %}<a href="{{ object.get_absolute_url }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
+            {% endwith %}
+          {% else %}
+            <td>{% if not hide_link %}<a href="{{ object.get_absolute_url }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
+          {% endif %}
+        {% endif %}
+        {% if not hide_columns %}
+          {% for column in object|get_source_columns %}
+
+            {% if column.label == "Group" %}
+              {% if display_group %}
+                <td>{% source_column_resolve column=column %}{{ column_result }}</td>
+              {% endif %}
+            {% else %}
+              <td>{% source_column_resolve column=column %}{{ column_result }}</td>
+            {% endif %}
+
+          {% endfor %}
+        {% endif %}
+
+        {% for column in extra_columns %}
+          <td>{{ object|object_property:column.attribute }}</td>
+        {% endfor %}
+
+  {% if not hide_links %}
+  <td class="last text-right">
+    {% get_menu_links 'object menu' source=object as resolved_links %}
+            {% for object_navigation_links in resolved_links %}
+              {% with 'true' as horizontal %}
+                {% with 'false' as hide_icon %}
+{% for link in object_navigation_links %}
+    {% if as_li %}
+        <li class="{% if link.active and li_class_active %}{{ li_class_active }}{% endif %}">
+    {% endif %}
+
+{% if link.separator %}
+    <li role="separator" class="divider"></li>
+{% elif link.text_span %}
+    <li class="text-center link-text-span" >{{ link.text }}</li>
+{% else %}
+    {% if link.disabled %}
+        <a class="{{ link.html_extra_classes }} {% if link_classes %}{{ link_classes }} {% else %}btn {% if 'dangerous' in link.tags %}btn-danger{% else %}btn-primary{% endif %} btn-xs{% endif %} {% if link.active %}{{ link_class_active }}{% endif %} {% if 'new_window' in link.tags %}new_window{% endif %} disabled" disabled='disabled' style="cursor: default;" href="#">{% if link.icon %}<i class="hidden-xs hidden-sm hidden-md {{ link.icon }}"></i>{% endif %}{% if link.icon_class %}{{ link.icon_class.render }}{% endif %} {{ link.text }}{% if link.error %} - {{ link.error }}{% endif %}</a>{% if horizontal %}{% if not forloop.last %}&nbsp;{% endif %}{% endif %}
+    {% else %}
+        <a
+            class="btn btn-default btn-xs {% if link.active %}{{ link_class_active }}{% endif %} new_window"
+            {% for key,value in link.html_data.items %}
+                data-{{ key }}={{ value }}
+            {% endfor %}
+        style="background-color: #ffffff !important; color: #8064A2 !important;"
+        href="{{ link.url }}"  title="{{ link.text }}"
+        >
+        {% if link.icon_class%}
+        {{ link.icon_class.render }}
+        {% else %}
+        {{ link.text }}
+        {% endif %}
+
+        </a>
+    {% endif %}
+{% endif %}
+
+    {% if as_li %}
+        </li>
+    {% endif %}
+{% endfor %}
+                {% endwith %}
+              {% endwith %}
+            {% endfor %}
+  </td>
+  {% endif %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<h4>No files tracked. </h4>
+{% endif %}
+{% if is_paginated %}
+    <ul class="pagination pagination-sm">
+        {% if page_obj.has_previous %}
+            <li><a href="?{{ page_obj.previous_page_number.querystring }}{{ url_filter }}">&lsaquo;&lsaquo;</a></li>
+        {% else %}
+            <li class="disabled"><a href="#">&lsaquo;&lsaquo;</a></li>
+        {% endif %}
+
+        {% for page in page_obj.pages %}
+
+            {% if page %}
+
+                {% ifequal page page_obj.number %}
+                    <li class="active"><a href="#">{{ page }}</a></li>
+                {% else %}
+                    <li><a href="?{{ page.querystring }}{{ url_filter }}">{{ page }}</a></li>
+                {% endifequal %}
+            {% else %}
+                <li class="disabled"><a href="#" class="disabled">...</a></li>
+            {% endif %}
+
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <li><a href="?{{ page_obj.next_page_number.querystring }}{{ url_filter }}">&rsaquo;&rsaquo;</a></li>
+        {% else %}
+            <li class="disabled"><a href="#">&rsaquo;&rsaquo;</a></li>
+        {% endif %}
+    </ul>
+{% endif %}
+<script>
+var slider = document.getElementById("myRange");
+var output = document.getElementById("demo");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+  output.innerHTML = this.value;
+}
+</script>
+{% endblock content %}
+

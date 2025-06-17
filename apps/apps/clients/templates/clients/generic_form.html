@@ -1,0 +1,14 @@
+{% extends 'appearance/base.html' %}
+
+{% block title %}{% include 'appearance/partials/form_title.html' with non_html_title=True %}{% endblock %}
+{% block content %}
+    {% if form %}
+        {% with '' as title %}
+        <div class="well">
+            {% include 'clients/generic_form_instance.html' %}
+        </div>
+        {% endwith %}
+    {% endif %}
+
+
+{% endblock %}

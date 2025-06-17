@@ -1,0 +1,22 @@
+{% load i18n %}
+{% load static %}
+
+{% load common_tags %}
+{% load navigation_tags %}
+
+{% if file_no %}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title"><b>{{file_no.file_no}}</b></h3>
+  </div>
+  <div class="panel-body">
+  {{file_no.parties}}
+  <br /><br />
+  <a href="/register/{{file_no.pk}}/edit"><button type="button" class="btn btn-primary btn-xs">Edit</button></a>
+  <a href="/register/{{file_no.pk}}/list"><button type="button" class="btn btn-primary btn-xs">Documents</button></a>
+  </div>   
+  <div class="panel-footer">Created: {{file_no.date}} | Status: {{file_no.status}}
+  </div>
+</div>
+{% endif %}
+

@@ -1,0 +1,186 @@
+{% extends 'appearance/base.html' %}
+
+{% load i18n %}
+
+{% load navigation_tags %}
+{% load static %}
+{% load common_tags %}
+{% load client_tags %}
+
+
+
+{% block content %}
+<style>
+.date-entry{
+  width:140px;
+}
+.form-control {
+  height: 32px;
+  display: inline;
+}
+
+.table1 {
+  width: auto;
+}
+.btn-c {
+  background-color: #ffffff !important;
+  color: #8064A2 !important;
+}
+</style>
+<!-- Filter collapse div start -->
+<div  class="row" >
+  <div id="search_filter" class="collapse" style="padding-top:15px;">
+    <form id="client_filter_form"  method="get" action="{% url 'register:department_list' %}">
+      {% csrf_token %}
+      {% for hidden_field in form.hidden_fields %}
+        {{ hidden_field }}
+      {% endfor %}
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+      <table class="table table1 table-condensed">
+        <tbody>
+          <tr>
+            <td style="width:110px" class="text-right">{{ form.clients.label_tag }}</td>
+            <td style="width:440px" colspan=2>{{ form.clients }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.contacts.label_tag }}</td>
+            <td colspan=2>{{ form.contacts }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.status.label_tag }}</td>
+            <td colspan=2>{{ form.status }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.lawyers.label_tag }}</td>
+            <td colspan=2>{{ form.lawyers }}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td colspan=2 class="text-right" style='padding:5px'><button type="submit" class="btn btn-default btn-xs btn-c" >Apply Filter</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-1"></div>
+    </form>
+  </div>
+</div>
+<!-- Filter collapse div end -->
+
+
+<!-- Row with Filter and Print button Start -->
+<div class="welll center-block">
+  <div class="clearfix" style="padding-bottom:13px">
+    <div class="pull-right">
+      {% if filter_active %}
+      <a href="{% url 'clients:client_list' %}">
+        <button class="btn btn-default btn-xs btn-c"  title="Clear Filter" style="margin-top:7px;"></span></button>
+      </a>
+      {% endif %}
+        <a class="new_window" href="{% url 'register:department_list_print' key=cache_key %}">
+          <button class="btn btn-default btn-xs btn-c"  title="Print Report" style="margin-top:7px;" type="submit"><i class="fas fa-print"></i></button>
+        </a>
+    </div>
+  </div>
+</div>
+<!-- Row with Filter and Print button End-->
+
+
+<div class="table-responsive">
+  <table class="table table-condensed table-striped">
+  <tbody>
+    {% if not hide_header %}
+      <tr>
+        {% if multi_item_actions %}
+          <th class="first"><input class="checkbox check-all" type="checkbox" /></th>
+        {% endif %}
+
+        {% if not hide_object %}
+          <th>{% trans 'Identifier' %}</th>
+        {% endif %}
+
+        {% if not hide_columns %}
+          {% for column in object_list|get_source_columns %}
+            <th>{{ column.label }}</th>
+          {% endfor %}
+        {% endif %}
+
+        {% for column in extra_columns %}
+          <th>{{ column.name }}</th>
+        {% endfor %}
+
+        {% if not hide_links %}
+          <th class="">&nbsp;</th>
+        {% endif %}
+      </tr>
+    {% endif %}
+    {% for object in object_list %}
+      <tr>
+        {% if multi_item_actions %}
+          <td>
+            {% if multi_select_item_properties %}
+              <input type="checkbox" class="form-multi-object-action-checkbox check-all-slave checkbox" name="properties_{{ object|get_encoded_parameter:multi_select_item_properties }}" value="" />
+            {% else %}
+              <input type="checkbox" class="form-multi-object-action-checkbox check-all-slave checkbox" name="pk_{{ object.pk }}" value="" />
+            {% endif %}
+          </td>
+        {% endif %}
+        {% if not hide_object %}
+          {% if main_object %}
+            {% with object|object_property:main_object as object %}
+            <td>{% if not hide_link %}<a href="{{ object.get_absolute_url }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
+            {% endwith %}
+          {% else %}
+            <td>{% if not hide_link %}<a href="{{ object.get_absolute_url }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
+          {% endif %}
+        {% endif %}
+
+        {% if not hide_columns %}
+        {% for column in object|get_source_columns %}
+            <td>{% source_column_resolve column=column %}{{ column_result }}</td>
+        {% endfor %}
+
+        {% endif %}
+
+        {% for column in extra_columns %}
+          <td>{{ object|object_property:column.attribute }}</td>
+        {% endfor %}
+
+        {% if not hide_links %}
+          <td class="last">
+            {% get_menu_links 'object menu' source=object as resolved_links %}
+            {% for object_navigation_links in resolved_links %}
+              {% with 'true' as horizontal %}
+                {% with 'true' as hide_icon %}
+                  {% include 'navigation/generic_navigation.html' %}
+                {% endwith %}
+              {% endwith %}
+            {% endfor %}
+          </td>
+        {% endif %}
+      </tr>
+
+      {% empty %}
+      <tr>
+        <td class="text-center" colspan=99>
+          {% include 'appearance/no_results.html' %}
+        </td>
+      </tr>
+    {% endfor %}
+    <tr>
+    <td></td>
+    <td>{{  active }}</td>
+    <td>{{  not_active }}</td>
+    <td>{{  dormant }}</td>
+    <td>{{  closed }}</td>
+    <td>{{  misc }}</td>
+    <td>{{  all }}</td>
+    <td></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+{% include 'pagination/pagination.html' %}
+{% endblock content %}
+

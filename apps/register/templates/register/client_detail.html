@@ -1,0 +1,47 @@
+{% extends 'reports/base.html' %}
+
+{% block content %}
+<style>
+.form-control{
+  display:inline;
+  width: 490px;
+  height: 20px;
+  margin: 0px 5px;
+  padding-left: 5px;
+}
+
+.group-xs > .btn{
+  padding: 0 5px;
+}
+
+* {
+  border-radius: 0 !important;
+}
+
+th{
+  padding-right: 5px;
+  padding-bottom: 5px;
+}
+td{
+  padding-right: 5px;
+  padding-bottom: 5px;
+
+}
+</style>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title"><b>Client</b></h3>
+  </div>
+  <div class="panel-body">
+  {{client.name}}
+  <br /><br />
+  {% if permission_register_edit %}
+  <a href="/register/client/{{client.pk}}/edit/"><button type="button" class="btn btn-primary btn-xs">Edit</button></a>
+  <a href="/register/client/{{client.pk}}/delete/"><button type="button" class="btn btn-primary btn-xs">Delete</button></a>
+  {% endif %}
+  <a href="/register/client/{{client.pk}}/matters/"><button type="button" class="btn btn-primary btn-xs">Matters</button></a>
+
+</div>
+
+
+{% endblock %}

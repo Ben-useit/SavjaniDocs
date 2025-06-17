@@ -1,0 +1,96 @@
+{% load i18n %}
+{% load static %}
+
+{% load common_tags %}
+{% load navigation_tags %}
+
+<div id='printable_content'>
+        <div class1="well center-block">
+
+            <div class="table-responsive">
+                <h4>Documents uploaded: {{ total }}</h4>
+{% if register %}
+                <h5>{% trans 'Documents attached to Matters' %}</h5>
+                <table class="table table-condensed table-striped">
+                    <tbody>
+                        {% for key, values in register.items %}
+                            <tr>
+                                    <td><b>{{ key.file_no }}</b></td>
+                                    <td><b>{{ key.parties }}</b></td>
+                                    <td><b>{{ key.status }}</td>
+                                <td class="last">
+  <a href="{% url 'reports:events' object_pk=key.pk %}"><button type="button" class="btn btn-xs btn-primary do-not-print">Events</button></a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                            <td colspan=3 style="padding-left:15px;background-color:white">
+                                <table >
+                                    {% for v in values %}
+                                    <tr>
+<td style="padding-right:10px;width:115px;"><span style="color:#970000"><i class="fas fa-angle-double-up"></i></span> {{ v.date_added|date:"d.m.Y" }}</td>
+<td><a href="{{ v.get_absolute_url }}"><i class="far fa-file-alt"></i><span style="padding-left:10px">{{v.label|truncatechars:120}}</span></a></td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            <td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+{% endif %}
+<!-- Quotation -->
+{% if quotation %}
+<h5>{% trans 'Documents attached to Quotations' %}</h5>
+                <table class="table table-condensed table-striped">
+                    <tbody>
+                        {% if not hide_header %}
+                            <tr>
+                              <th colspan=2>{% trans 'Documents attached to Quotations' %}</th>
+                            </tr>
+                        {% endif %}
+                        {% for key, values in quotation.items %}
+                            <tr>
+                                    <td>{{ key.file_no }}</td>
+                                    <td>{{ key.parties }}</td>
+                                <td class="last">
+  <a href="{% url 'reports:events' object_pk=key.pk %}"><button type="button" class="btn btn-xs btn-primary">Events</button></a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                            <td colspan=3 style="padding-left:15px;background-color:white">
+                                <table >
+                                    {% for v in values %}
+                                    <tr>
+<td style="padding-right:10px;width:115px;"><span class="glyphicon glyphicon-cloud-upload" style="color:green;padding-right:5px;"></span>{{ v.date_added|date:"d.m.Y" }}</td>
+<td><a href="{{ v.get_absolute_url }}"><i class="far fa-file-alt"></i><span style="padding-left:10px">{{v.label|truncatechars:120}}</span></a></td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            <td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+{% endif %}
+<!-- Other -->
+{% if unattached %}
+<h5>{% trans 'Documents not attached' %}</h5>
+    <table class1="table table-condensed table-striped">
+      <tbody>
+        {% for doc in unattached %}
+          <tr>
+          <td style="padding-right:10px;width:115px"><span class="glyphicon glyphicon-cloud-upload" style="color:green;padding-right:5px;"></span>{{doc.date_added|date:"d.m.Y"}}</td>
+          <td><a href="{{ doc.get_absolute_url }}"><i class="far fa-file-alt"></i><span style="padding-left:10px">{{doc.label|truncatechars:120}}</span></a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endif %}
+
+            </div>
+        </div>
+    </div>
+
+

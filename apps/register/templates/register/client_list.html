@@ -1,0 +1,126 @@
+{% extends 'reports/base.html' %}
+
+{% block content %}
+<style>
+.form-control{
+  display:inline;
+  width: 490px;
+  height: 20px;
+  margin: 0px 5px;
+  padding-left: 5px;
+}
+
+.group-xs > .btn{
+  padding: 0 5px;
+}
+
+* {
+  border-radius: 0 !important;
+}
+
+th{
+  padding-right: 5px;
+  padding-bottom: 5px;
+}
+td{
+  padding-right: 5px;
+  padding-bottom: 5px;
+
+}
+</style>
+<div id='printable_content'>
+    <table class="table table-condensed" style="margin-bottom:0px;">
+        <tbody>
+            <tr>
+                <td class="h4">{{ total }} {{ title }}<span class="visible-print"></td>
+                <td>
+                  <form action="/register/client/list/" method="GET"  class="do-not-print">
+                    {% csrf_token %}
+                    <input type="hidden" name="search_q" value="{{ search_q }}">
+                     {{ form.name.label_tag }} {{ form.name }}
+                     {{ form.lawyers.label }} {{ form.lawyers }}
+                    <span>
+                      <button class="btn btn-xs btn-info" style="margin-left: 10px;" name='submit' type="submit"><i class="fas fa-check"></i> Filter</button>
+                    </span><br />
+                    {% for field in form.visible_fields %}
+                    {% if field.label != 'Name' and field.label != 'Lawyer' %}
+                    {{ field.label }} {{ field }}
+                    {% endif %}
+                    {% endfor %}
+
+                  </div>
+                  </form>
+                </td>
+                <td rowspan=2>
+                <a href="{{ print_url }}"><button onclick1="printContent('printable_content');" class="btn btn-xs btn-warning do-not-print pull-right">Print</button></a>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+    <h4>{{ clients_for }}</h4>
+<div class="table-responsive">
+<table class="table table-condensed table-striped">
+<thead>
+<tr>
+  <th>Name</th>
+  <th>Total</th>
+  <th>Active</th>
+  <th>Not active</th>
+  <th>Dormant</th>
+  <th>Closed</th>
+  <th>Misc.</th>
+  <td></td>
+</tr>
+</thead>
+<tbody>
+<tr >
+  <td></td>
+  <td><b>{{ totals.1 }}</b></td>
+  <td><b>{{ totals.2 }}</b></td>
+  <td><b>{{ totals.3 }}</b></td>
+  <td><b>{{ totals.4 }}</b></td>
+  <td><b>{{ totals.5 }}</b></td>
+  <td><b>{{ totals.6 }}</b></td>
+  <td></td>
+</tr>
+{% for obj in object_list %}
+<tr>
+  <td>{{ obj.0.name }}</td>
+  <td>{{ obj.1 }}</td>
+  <td>{{ obj.2 }}</td>
+  <td>{{ obj.3 }}</td>
+  <td>{{ obj.4 }}</td>
+  <td>{{ obj.5 }}</td>
+  <td>{{ obj.6 }}</td>
+  <td class="last">
+  <a class="None btn btn-primary btn-xs" href="{% url 'register:client_list_matters' pk=obj.0.pk %}"> Matters</a>&nbsp;
+  {% if permission_edit %}
+  <a class="None btn btn-primary btn-xs" href="{% url 'register:client_edit' pk=obj.0.pk %}"> Edit</a>&nbsp;
+  <a class="None btn btn-danger btn-xs" href="{% url 'register:client_delete' pk=obj.0.pk %}"> Delete</a>&nbsp;
+  {% endif %}
+  </td>
+
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+
+{% include 'pagination/pagination.html' %}
+<script>
+  $(document).ready(function() {
+      $('#id_lawyers').multiselect({
+        maxHeight: 200,
+        buttonClass: 'btn btn-xs',
+        numberDisplayed: 1,
+        includeSelectAllOption: true,
+        });
+      $("#id_lawyers").multiselect('selectAll', true);
+      $("#id_lawyers").multiselect('updateButtonText');
+  });
+
+</script>
+
+
+{% endblock %}

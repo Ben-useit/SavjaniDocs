@@ -1,0 +1,87 @@
+{% extends 'reports/base.html' %}
+
+{% block content %}
+<style>
+.form-control{
+  display:inline;
+  width: 120px;
+  height: 20px;
+  margin: 0px 5px;
+}
+
+.group-xs > .btn{
+  padding: 0 5px;
+}
+
+* {
+  border-radius: 0 !important;
+}
+
+span.multiselect-native-select{
+  margin-left:5px;
+}
+.btn {
+  vertical-align: baseline;
+}
+
+.btn-group {
+  vertical-align: bottom;
+  width: 120px;
+}
+
+</style>
+<div id='printable_content'>
+    <table class="table table-condensed" style="margin-bottom:0px;">
+        <tbody>
+            <tr>
+                <td class="h4">{{ title }}<span class="visible-print"> {{date_from}} - {{ date_to }} <br />Created: {{ timestamp }}</span></td>
+                <td>
+                  <form method="post" class="do-not-print">
+                    {% csrf_token %}
+                    {% for field in form.visible_fields %}
+                  {{ field.label }}{{ field }}
+                  {% endfor %}
+                  <span style1='padding-left:20px'>
+                    <button class="btn btn-xs btn-primary" name='submit' type="submit"><i class="fas fa-check"></i> Submit</button>
+                  </span>
+                  </div>
+                  </form>
+                </td>
+                <td rowspan=2>
+                <button onclick="printContent('printable_content');" class="btn btn-xs btn-warning do-not-print pull-right">Print</button>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+{% if lawyer_activity %}
+{% include 'reports/lawyer_activity.html' %}
+{% elif transfer_report %}
+{% include 'reports/transfer_report.html' %}
+{% else %}
+{% include 'reports/register_statistic.html' %}
+{% endif %}
+
+
+<script>
+function printContent(el){
+  var restorepage = document.body.innerHTML;
+  var printcontent = $('#' + el).clone();
+  $('body').empty().html(printcontent);
+  window.print();
+  document.body.innerHTML = restorepage;
+}
+  $(document).ready(function() {
+      $('#id_lawyers').multiselect({
+        maxHeight: 200,
+        buttonClass: 'btn btn-xs',
+        numberDisplayed: 1,
+        includeSelectAllOption: true,
+        });
+      $("#id_lawyers").multiselect('selectAll', true);
+      $("#id_lawyers").multiselect('updateButtonText');
+  });
+
+</script>
+
+
+{% endblock %}

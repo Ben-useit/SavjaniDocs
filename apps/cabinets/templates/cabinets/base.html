@@ -1,0 +1,70 @@
+{% load i18n %}
+{% load static %}
+
+{% load common_tags %}
+{% load navigation_tags %}
+{% load smart_settings_tags %}
+
+<script>
+    if (typeof partialNavigation === 'undefined') {
+        /* Check if the template was not loaded via AJAX
+         * If not then reload the root path passing the
+         * current location's path as the new hash
+         */
+        document.write('<script type="text/undefined">')
+        var currentPath = window.location.pathname + window.location.search;
+        window.location = '/#' + currentPath;
+    }
+</script>
+
+{% block stylesheets %}{% endblock %}
+
+{% if appearance_type == 'plain' %}
+    {% block content_plain %}{% endblock %}
+{% else %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                {% check_sqlite as check_sqlite %}
+                {% if check_sqlite %}
+                    <div class="alert alert-dismissible alert-warning">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <p><strong>{% trans 'Warning' %}</strong> {{ check_sqlite }}</p>
+                    </div>
+                {% endif %}
+                {% block messages %}
+                {% endblock %}
+            </div>
+        </div>
+
+        {% get_menus_links names='object menu,sidebar menu,secondary menu' sort_results=True as links %}
+        {% get_menu_links 'object facet' sort_results=True as form_navigation_links %}
+
+        <div class="row">
+                <div class="col-xs-12 col-sm-9 col-md-10 col-lg-12">
+                {% include 'appearance/calculate_form_title.html' %}
+                {% block content %}{% endblock %}
+                {% block footer %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<script>
+    var DjangoMessages = [
+        {% for message in messages %}
+            {
+                tags: '{{ message.tags }}',
+                message: '{{ message.message }}'
+            },
+        {% endfor %}
+    ];
+</script>
+{% block javascript %}{% endblock %}
+
+<script>
+    document.title = '{% filter escapejs %}{% spaceless %}{% block title %}{% endblock %} :: {% block project_name %}{% smart_setting "COMMON_PROJECT_TITLE" %}{% endblock %}{% endspaceless %}{% endfilter %}';
+    // Strip HTML entities from the title
+    document.title = document.title.replace(/&(?:[a-z\d]+|#\d+|#x[a-f\d]+);/ig, '');
+    afterBaseLoad();
+</script>

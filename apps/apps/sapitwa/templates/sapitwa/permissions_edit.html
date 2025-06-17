@@ -1,0 +1,49 @@
+{% load i18n %}
+{% load static %}
+
+{% load appearance_tags %}
+{% load common_tags %}
+{% load navigation_tags %}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="well center-block">
+<form method="post" class="post-form">
+  {% csrf_token %}
+
+  {{ form.non_field_errors }}
+
+  {{ form.source.errors }}
+  {{ form.source }}
+  
+<div class="row" style="padding:10px">  
+    <div class="btn-group" data-toggle="buttons">  
+    {% for radio in form.permission %}
+    {% if radio.choice_label == "Full Access" %}
+      <label class="btn btn-default brand-primary btn-sm {%if rw %} active {% endif %}">
+        <input type="radio" name="permission" id="{{ radio.choice_label }}" value="full">{{ radio.choice_label }}
+      </label>
+    {% elif radio.choice_label == "Limited Access" %}
+      <label class="btn btn-default brand-primary btn-sm {%if not rw %} active {% endif %}">
+        <input type="radio" name="permission" id="{{ radio.choice_label }}" value="limited">{{ radio.choice_label }}
+      </label>
+    {% else %}
+      <label class="btn btn-default brand-primary btn-sm">
+        <input type="radio" name="permission" id="{{ radio.choice_label }}" value="none">{{ radio.choice_label }}
+      </label>
+    {% endif %}
+
+    {% endfor %}
+    </div>
+</div>
+<div class="row" style="padding:10px"> 
+<button type="submit" class="btn btn-primary btn-sm btn-hotkey-default" style="width: 8em !important;margin-right:10px" value="save">Save</button>
+<a href="{{ get_success_url }}" class="btn btn-default btn-sm" style="width: 8em !important;">Cancel</a>
+</div> 
+</form>
+
+
+
+    </div>
+</div>
+

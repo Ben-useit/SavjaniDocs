@@ -1,0 +1,277 @@
+{% load i18n %}
+{% load static %}
+
+{% load common_tags %}
+{% load navigation_tags %}
+
+<div class="row">
+    <div class="col-xs-12">
+        <h4>
+            {% if page_obj %}
+                {% if page_obj.paginator.num_pages != 1 %}
+                    {% blocktrans with page_obj.start_index as start and page_obj.end_index as end and page_obj.paginator.object_list|length as total and page_obj.number as page_number and page_obj.paginator.num_pages as total_pages %}Total ({{ start }} - {{ end }} out of {{ total }}) (Page {{ page_number }} of {{ total_pages }}){% endblocktrans %}
+                {% else %}
+                    {% with page_obj.paginator.object_list|length as total %}
+                        {% if not slice_count %}
+                        {% blocktrans %}Total: {{ total }}{% endblocktrans %}
+                        {% elif slice_count < total %}
+                        {% blocktrans %}Total: {{ slice_count }}{% endblocktrans %}
+                        {% else %}
+                        {% blocktrans %}Total: {{ total }}{% endblocktrans %}
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+            {% else %}
+                {% blocktrans with object_list|length as total %}Total: {{ total }}{% endblocktrans %}
+            {% endif %}
+        </h4>
+        <hr>
+        {% if metadata_dic %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <button class="btn btn-info" href="#search_filter" data-toggle="collapse" style="margin-left:0;margin-bottom:10px">Filter Results</button>
+            </div>
+        </div>
+        <!-- row -->
+        <div class="row">
+
+            <div class="col-xs-12">
+                <div id="search_filter" class="collapse">
+                <form id="my_search_form"  method="get" action="{% url 'search:results' search_model='documents.Document' %}">
+                  {% csrf_token %}
+
+                  {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field }}
+                  {% endfor %}
+                  <input type="hidden" name="q" value="{{ q }}">
+                  <table border="0">
+                    <tr>
+                    {% for field in form.visible_fields %}
+                     {% if forloop.counter0 > 0 and forloop.counter0|divisibleby:2 %}
+                     </tr><tr>
+                     {% endif %}
+                        <td >
+                        <label style="width:150px;padding:10px;" class="text-right" for="{{ field.name }}">{{ field.label }}</label>
+                        </td>
+                        <td >
+                          {{ field.errors }}
+                          {{ field }}
+                          {{ field.help_text }}
+                        </td>
+                    {% endfor %}
+                    </tr>
+                    <tr>
+                    <td></td><td></td><td></td>
+                    <td class="text-right"><button type="submit" class="btn btn-info" >Apply filter</button></td>
+                    </tr>
+                  </table>
+                </form>
+                </div><!-- collapse -->
+            </div><!-- col -->
+        </div><!-- row -->
+        <div class="row">
+            <div class="col-xs-12">
+
+
+        {% endif %}
+        <div class="well center-block" style="background-color: white;">
+            <div class="clearfix">
+                <div class="pull-right">
+                    <form action="{% url 'common:multi_object_action_view' %}" class="form-multi-object-action" method="get">
+                        {% if object_list %}
+                            {% if not hide_multi_item_actions %}
+                                {% get_multi_item_links_form object_list %}
+                            {% endif %}
+                            {% if multi_item_actions %}
+                                <fieldset style="margin-top: -10px;">
+                                    <input class="check-all" type="checkbox"/>&nbsp;
+                                    {{ multi_item_form }}
+                                </fieldset>
+                            {% endif %}
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+
+            {% if object_list %}
+                <hr style="border-bottom: 1px solid lightgrey;">
+            {% endif %}
+    <style>
+
+
+    .docitem {
+        margin-bottom: 20px;
+        background-color: #d9d9d9;
+    }
+
+    .document-label {
+        font-size: 120%;
+        font-weight: bolder;
+        color: #982920;
+    }
+    .metadata-name {
+        font-weight: bolder;
+    }
+
+    .metadata-value {
+        font-style: italic;
+
+    }
+
+    #module {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    #module p.collapse[aria-expanded="false"] {
+        display: block;
+        height: 160px !important;
+        overflow: hidden;
+    }
+    #module p.collapsing[aria-expanded="false"] {
+        height: 160px !important;
+    }
+    #module a.collapsed:after  {
+        content: '+ Show More';
+    }
+
+    #module a:not(.collapsed):after {
+        content: '- Show Less';
+    }
+    .flex-container {
+      display: flex;
+      #height: 230px;
+      justify-content: center;
+      #background-color: DodgerBlue;
+      flex-direction: column;
+    }
+    .shared1 {
+    background1: repeating-linear-gradient(
+      -55deg,
+      #222,
+      #222 10px,
+      #333 10px,
+      #333 20px
+    );
+    height: 240px;
+
+    }
+
+    .checkbox-document{
+        position: relative;
+        max-width: 10px;
+        top: -10px;
+    }
+    .ro-permission {
+        color: grey;
+    }
+
+    </style>
+            <div class="row row-items" style="margin-left: 0px;margin-right: 0px;">
+                {% with  count=slice_count|stringformat:"s" %}
+                {% with  slicce=":"|add:count %}
+                {% for object in object_list|slice:slicce %}
+                <!--  START NEW LIST -->
+            <div class="row" style="margin-bottom: 0px;">
+                <!-- Checkbox -->
+                <div class="col-sm-1" style="max-width: 10px;">
+                    <div class="checkbox checkbox-document">
+                        <label for="id_indexes_0">
+                            {% if multi_item_actions %}
+                                {% if multi_select_item_properties %}
+                                    <input class="form-multi-object-action-checkbox check-all-slave checkbox" type="checkbox" name="properties_{{ object|get_encoded_parameter:multi_select_item_properties }}" />
+                                {% else %}
+                                    <input class="form-multi-object-action-checkbox check-all-slave checkbox" type="checkbox" name="pk_{{ object.pk }}" />
+                                {% endif %}
+                            {% endif %}
+                        </label>
+                    </div>
+                </div>
+                <!-- Thumbnail -->
+                <div class="col-sm-2">
+                {% for column in object|get_source_column_thumbnail %}
+                    {% source_column_resolve column=column %}{{ column_result }}
+                {% endfor %}
+                </div>
+                <!-- Label, Metadata -->
+                <div class="col-sm-6">
+                    <div style="height:180px;overflow-y: auto;">
+                        <a href="{{ object.get_absolute_url }}" style="color:white">
+                            <span class="document-label">{{ object }}</span>
+                        </a><br />
+                        {% for column in object|get_source_column_metadata %}
+                            {% source_column_resolve column=column %}
+                            {{ column_result }}
+                        {% endfor %}
+                    </div>
+                    <div>
+                        <i class="glyphicon glyphicon-pencil" style = "position: relative;top: 2px;padding-right: 3px;font-size:13px;"></i><span style = "font-size:13px;">{{ object.last_modified }}</span>
+                        <i class="glyphicon glyphicon-arrow-up" style = "position: relative;top: 2px;padding-right: 3px;font-size:13px;"></i><span style = "font-size:13px;">{{ object.date_added }}</span>
+                    </div>
+                </div>
+                <!-- Shares -->
+                <div class="col-sm-3 shared">
+                {% for column in object|get_source_column_permissions %}
+                    {% source_column_resolve column=column %}{{ column_result }}
+                {% endfor %}
+                </div>
+
+
+            </div><!-- End Item1 -->
+            <hr style="border-bottom: 1px solid lightgrey;">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <!-- END NEW LISTING -->
+
+                {% empty %}
+                    <div class="col-xs-12">
+                        {% include 'appearance/no_results.html' %}
+                    </div>
+
+                {% endfor %}
+                {% endwith %}
+                {% endwith %}
+
+            </div>
+
+            {% include 'pagination/pagination.html' %}
+        </div>
+        {% if objects_without_permission %}
+            <h4>{{ title_no_permission }}</h4>
+            <div class="well center-block">
+                <div class="row row-items">
+                    {% for object in objects_without_permission %}
+                        <i class="glyphicon glyphicon-file">&nbsp;</i><a href="{{ object.get_request_url }}" style="color:grey; font-size:90% "><span>{{ object | truncatechars:120}}</span></a><br />
+                    {% endfor %}
+
+                </div>
+
+                {% include 'pagination/pagination.html' %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+<script>
+    'use strict';
+
+    $(function() {
+        $('.row-items > [class*="col"] .panel-item .panel-heading').matchHeight();
+        $('.row-items > [class*="col"] .panel-item .panel-body').matchHeight();
+        $('.row-items > [class*="col"] .panel-item').matchHeight();
+    });
+    launchScript();
+</script>
+

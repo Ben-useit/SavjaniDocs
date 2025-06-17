@@ -1,0 +1,46 @@
+{% load i18n %}
+{% load static %}
+
+{% load common_tags %}
+{% load navigation_tags %}
+{% load reports_tags %}
+
+<div class="container-fluid">
+    <h4>Activity Report for {{ lawyer_full_name }}</h4>
+{% for key, values in reg_dic.items %}
+  <div class="row">
+    <div class="col-sm-11"><b>{{ values.count }} {{ key }}</b> </div>
+    <div class="col-sm-1 pull-right"><button type="button" class="btn btn-xs btn-info pull-right" data-toggle="collapse" data-target="#{{ forloop.counter }}"><i class="fas fa-angle-double-down"></i> Details</button></div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <table id="{{ forloop.counter }}"  class="collapse table table-condensed">
+        <thead>
+          <tr>
+            <th>Opened</th>
+            <th style="width:145px">Number</th>
+            <th style="width:250px">Client</th>
+            <th>Parties</th>
+            <th>Documents</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for value in values %}
+        <tr>
+            <td>{{ value.opened | date:"d.m.Y" }}</td>
+            <td>{{ value.file_no }}</td>
+            <td>{% if value.client %} {{ value.client }}{% endif %}</td>
+            <td>{{ value.parties | truncatechars:60 }}</td>
+            <td>{% matter_get_document_count value user %}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endfor %}
+</div>
+
+
+
+

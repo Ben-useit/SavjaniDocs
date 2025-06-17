@@ -1,0 +1,47 @@
+{% load i18n %}
+{% load static %}
+
+{% load common_tags %}
+{% load navigation_tags %}
+
+<div class="row">
+    <div class="col-xs-12">
+        {% if not result %}
+            <div class="well">
+                {% include 'appearance/no_results.html' %}
+            </div>
+        {% else %}
+        <hr>
+		<h3>{{ title }}</h3>
+            {% include 'appearance/list_header.html' %}
+            
+            <div class="well center-block">
+                <div class="row row-items">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Firstname</th>
+                            <th>Lastname</th>
+                            <th>Documents Uploaded</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for key, value in result.items %}
+			{% if key.first_name %}        
+                          <tr>
+                            <td>{{key.first_name }}</td>
+                            <td>{{ key.last_name }}</td>
+                            <td>{{ value }}</td>
+                          </tr>
+                        {% endif %}
+                        {% endfor %}    
+                        </tbody>
+                      </table>                    
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+
+

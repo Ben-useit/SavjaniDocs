@@ -1,0 +1,148 @@
+{% extends 'appearance/base.html' %}
+
+{% load i18n %}
+
+{% load navigation_tags %}
+{% load static %}
+{% load common_tags %}
+
+
+
+{% block content %}
+<style>
+.date-entry{
+  width:140px;
+}
+.form-control {
+  height: 32px;
+  display: inline;
+}
+
+.table1 {
+  width: auto;
+}
+.btn-c {
+  background-color: #ffffff !important;
+  color: #8064A2 !important;
+}
+</style>
+
+<!-- Filter collapse div start -->
+<div  class="row" >
+  <div id="search_filter" class="collapse">
+    <form id="reports_filter_form"  method="post" action="{% url 'reports:register_files_report' %}">
+      {% csrf_token %}
+      {% for hidden_field in form.hidden_fields %}
+        {{ hidden_field }}
+      {% endfor %}
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+      <table class="table table1 table-condensed">
+        <tbody>
+          <tr>
+            <td></td>
+            <td style="width: 220px;"><label>Opened from:</label><br />{{ form.from }}</td>
+            <td style="width: 220px;"><label>Openend to:</label><br />{{ form.to }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.status.label_tag }}</td>
+            <td colspan=2>{{ form.status }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.lawyers.label_tag }}</td>
+            <td colspan=2>{{ form.lawyers }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.clients.label_tag }}</td>
+            <td colspan=2>{{ form.clients}}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.groups.label_tag }}</td>
+            <td colspan=2>{{ form.groups }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.departments.label_tag }}</td>
+            <td colspan=2>{{ form.departments }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">{{ form.checklist.label_tag }}</td>
+            <td colspan=2>{{ form.checklist }}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td colspan=2 class="text-right" style='padding:5px'><button type="submit"
+            class="btn btn-default btn-xs btn-c" >Apply Filter</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-1"></div>
+    </form>
+  </div>
+</div>
+<!-- Filter collapse div end -->
+
+<!-- Row with Filter and Print button Start -->
+<div class="welll center-block">
+  <div class="clearfix" style="padding-bottom:13px">
+    <div class="pull-right">
+      {% if filter_active %}
+      <a href="{% url 'reports:register_files_report' %}">
+        <button class="btn btn-default btn-xs btn-c"  title="Clear Filter" style="margin-top:7px;">Clear Filter</span></button>
+      </a>
+      {% endif %}
+      <button type="button" class="btn btn-default btn-xs btn-c" href="#search_filter" data-toggle="collapse" style="margin-top:7px;">Filter Results</button>
+        <a class="new_window" href="{% url 'reports:register_files_report_print' key=cache_key %}">
+          <button class="btn btn-default btn-xs btn-c"  title="Print Report" style="margin-top:7px;" type="submit"><i class="fas fa-print"></i></button>
+        </a>
+    </div>
+  </div>
+</div>
+<!-- Row with Filter and Print button End-->
+
+
+    <div id='printable_content' class="table-responsive ">
+      <div><span class="visible-print"><h4>Register Files Report</h4></span></div>
+        <table class="table table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>Lawyer</th>
+                    <th style="width: 100px">Active</th>
+                    <th style="width: 100px">Not Active</th>
+                    <th style="width: 100px">Dormant</th>
+                    <th style="width: 100px">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for key, values in reg_dic %}
+                <tr>
+                <td style="padding-right:10px;width:250px"><span class="glyphicon glyphicon-user"></span> {{ key }}</td>
+                {% for value in values %}
+                <td style="width: 100px">{{ value }}</td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+<script>
+function printContent(el){
+  var restorepage = document.body.innerHTML;
+  var printcontent = $('#' + el).clone();
+  $('body').empty().html(printcontent);
+  window.print();
+  document.body.innerHTML = restorepage;
+}
+var slider = document.getElementById("myRange");
+var output = document.getElementById("demo");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+  output.innerHTML = this.value;
+}
+</script>
+{% endblock content %}
+
+
+
+

@@ -1,0 +1,32 @@
+{% extends 'appearance/base.html' %}
+
+{% load i18n %}
+
+{% load navigation_tags %}
+
+{% block title %}{% include 'appearance/calculate_form_title.html' with non_html_title=True %}{% endblock %}
+
+{% block content %}
+    {% if list_as_items %}
+        {% include 'appearance/generic_list_items_subtemplate.html' %}
+    {% elif list_roles %}
+        {% if object_list_rw %}
+            {% include 'sapitwa/permission_list.html' with object_list=object_list_rw title="Full Access:" %}
+        {% endif %}
+        {% if object_list_ro %}
+            {% include 'sapitwa/permission_list.html' with object_list=object_list_ro title="Limited Access:" %}  
+        {% endif %}
+        {% if not object_list_rw and not object_list_ro %}
+            <div class="well">
+                {% include 'appearance/no_results.html' %}
+            </div>
+        {% endif %}
+    {% elif permissions_edit %}
+        {% include 'sapitwa/permissions_edit.html' %}
+    {% elif permissions_create %}
+        {% include 'sapitwa/permissions_create.html' %}
+    {% else %}
+        {% include 'appearance/generic_list_subtemplate.html' %}
+    {% endif %}
+{% endblock content %}
+

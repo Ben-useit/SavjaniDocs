@@ -1,0 +1,36 @@
+{% extends 'appearance/base.html' %}
+
+{% load i18n %}
+
+{% load navigation_tags %}
+
+{% block title %}{% include 'appearance/calculate_form_title.html' with html_title=True %}{% endblock %}
+
+{% block content %}
+    <div class="well center-block">
+        <div class="row">
+            <div class="col-xs-12">
+
+                <form action="{% url 'search:results' search_model='documents.Document' %}" method="get" role="search">
+                    <div class="input-group">
+                        <input class="form-control" name="q" placeholder="{% trans 'Search documents' %}" type="text" value="{{ search_terms|default:'' }}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">{% trans 'Search' %}</button>
+                            {# <a class="btn btn-primary" href="{% url 'search:search_advanced' search_model='documents.Document' %}">{% trans 'Advanced' %}</a> #}
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% if title_ %}
+        <h5>{% include 'appearance/calculate_form_title.html' %}</h5>
+        <hr>
+    {% endif %}
+    {% if list_as_items %}
+        {% include 'appearance/generic_list_items_subtemplate.html' %}
+    {% else %}
+        {% include 'appearance/generic_list_subtemplate2.html' %}
+    {% endif %}
+{% endblock content %}
+
