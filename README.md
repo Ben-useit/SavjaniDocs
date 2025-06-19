@@ -24,7 +24,7 @@ sudo -u postgres createdb -O &lt;db_user&gt; &lt;db_name&gt;
 
 1\. cd &lt;project_directory&gt;
 
-2\. git clone <https://github.com/Ben-useit/mayan-310.git> mayan
+2\. git clone <https://github.com/Ben-useit/SavjaniDocs> mayan
 
 3\. virtualenv --python=/usr/bin/python2 venv
 
